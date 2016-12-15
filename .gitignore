@@ -1,3 +1,14 @@
+# Sublime Text Files
+*.sublime-workspace
+*.sublime-project
+
+# Vim
+*.swp
+
+# Node
+node_modules
+
+## C++ stuff
 # Compiled Object files
 *.slo
 *.lo

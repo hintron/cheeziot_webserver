@@ -3,3 +3,10 @@ Install NodeJs 6.x (LTS version) using install script
 
 Install Git using apt-get
 
+Setup an initial nodejs project
+    npm init
+
+Install new npm packages to a project with this command. It should modify the dependencies field in the package.json file:
+    npm install --save <package_name_here>
+
+
