@@ -70,6 +70,7 @@ app.get('/data', function (req, res, next) {
             res.send(JSON.stringify({
                 success: true,
                 msg:'Here is all the temperature data:',
+                count: temp_records.length,
                 data: data,
             }));
         }
