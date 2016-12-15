@@ -1,0 +1,5 @@
+Install NodeJs 6.x (LTS version) using install script
+    https://nodejs.org/en/download/package-manager/#debian-and-ubuntu-based-linux-distributions
+
+Install Git using apt-get
+
