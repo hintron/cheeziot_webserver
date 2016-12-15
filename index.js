@@ -17,9 +17,7 @@ mongoose.Promise = require('bluebird');
 //
 // See http://mongoosejs.com/docs/index.html
 // TODO: Create mongoose models
-// var Mydata_model = require('./models/passcode.js');
-
-
+var temp_model = require('./models/temperature.js');
 
 const DB = "kaa";
 
@@ -46,29 +44,42 @@ app.use(bodyparser.json());
 
 
 // TODO: Create CRUD endpoints
-app.post('/data', function (req, res, next) {
-    // var sess = req.session;
+
+
+// app.post('/data', function (req, res, next) {
+// Use get instead of post for now, so I can test in browser window
+app.get('/data', function (req, res, next) {
+    // console.log("Test CRUD endpoint!");
+    // TODO: Grab inputs
     // var my_var = req.body.my_var;
+    // var sess = req.session;
 
     // Regarding mongodb injection preventions, read ALL the answers:
     // http://stackoverflow.com/questions/13436467/javascript-nosql-injection-prevention-in-mongodb
 
-    // TODO: replace find with findOne
-    // Mydata_model.find({passcode: passcode}, function (err, passcodes) {
-    //     if(err) return console.error(err);
-    //     if(1){
-    //         res.send(JSON.stringify({
-    //             success: true,
-    //             msg:'Correct code!',
-    //         }));
-    //     }
-    //     else {
-    //         res.send(JSON.stringify({
-    //             success: false,
-    //             msg:'Incorrect Code...',
-    //         }));
-    //     }
-    // }); // End Mydata_model callback
+    temp_model.find({}, function (err, temp_records) {
+        if(err) return console.error(err);
+        if(temp_records.length > 0){
+            // Filter out the kaa-specific data?
+            var data = [];
+            for(index in temp_records){
+                // console.log(temp_records[index]);
+                // console.log(temp_records[index]["event"]);
+                data.push(temp_records[index]["event"]);
+            }
+            res.send(JSON.stringify({
+                success: true,
+                msg:'Here is all the temperature data:',
+                data: data,
+            }));
+        }
+        else {
+            res.send(JSON.stringify({
+                success: false,
+                msg:'Could not get the data...',
+            }));
+        }
+    }); // End temp_model callback
 
 
 });
