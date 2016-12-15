@@ -9,4 +9,18 @@ Setup an initial nodejs project
 Install new npm packages to a project with this command. It should modify the dependencies field in the package.json file:
     npm install --save <package_name_here>
 
+Install the forever node module globally:
+    sudo npm install forever -g
 
+Then run this:
+    sudo forever start index.js
+
+To stop, run:
+    sudo forever stopall
+
+To see running processes, run:
+    sudo forever list
+
+NOTE: You NEED sudo for all of these! The sudo and non-sudo versions of these commands cannot see each other's tasks!
+
+Mongo DB needs to be running. This should already be taken care of by Kaa.
