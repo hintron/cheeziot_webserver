@@ -1,6 +1,6 @@
 var express = require('express');
 var http = require('http');
-// var fs = require('fs');
+var fs = require('fs');
 // Header security improvements
 var helmet = require('helmet');
 // To parse JSON data
@@ -18,6 +18,7 @@ mongoose.Promise = require('bluebird');
 // See http://mongoosejs.com/docs/index.html
 // TODO: Create mongoose models
 var temp_model = require('./models/temperature.js');
+var image_model = require('./models/image.js');
 
 const DB = "kaa";
 
@@ -57,7 +58,7 @@ app.get('/data', function (req, res, next) {
     // Regarding mongodb injection preventions, read ALL the answers:
     // http://stackoverflow.com/questions/13436467/javascript-nosql-injection-prevention-in-mongodb
 
-    temp_model.find({}, function (err, temp_records) {
+    temp_model.find({}, function(err, temp_records) {
         if(err) return console.error(err);
         if(temp_records.length > 0){
             // Filter out the kaa-specific data?
@@ -84,6 +85,75 @@ app.get('/data', function (req, res, next) {
 
 
 });
+
+
+// Proof-of-concept - storing and retrieving an image from MongoDB!
+
+// TODO: Is it worth it to save images in MongoDB with Kaa?
+// Will we gain from Kaa's redundancy protections here?
+// Or would it be simpler to merely store the path to an image, and store the images into folders in the file system?
+
+// stash image
+// Stores the file "public/image.jpg" in the db and deletes the left-over file
+app.get('/stash', function (req, res, next) {
+    var image = "/public/image.jpg"
+
+    fs.readFile(__dirname + image, function(err, data) {
+        if (err){
+            console.error(err);
+            res.send("Cannot stash image " + image + ". Perhaps it doesn't exist?");
+            return;
+        }
+        
+        // console.log(data);
+        var record = new image_model({
+            image: data, 
+        });
+        record.save(function(err, saved_record) {
+            if(err) return console.error(err);
+            
+            // Delete the image file
+            fs.unlink(__dirname + image, function(){
+                console.log("Deleted file " + image);
+            });
+
+            // console.log(saved_record);
+            res.send("image stashed and saved: " + image);
+        });
+    });
+});
+
+
+
+// Un-stash or pop an image
+// Gets the first record in the test_images collection,
+// and extracts the image data and saves it into a file called image_out.jpg,
+// then deletes the record the image was extracted from
+app.get('/retrieve', function (req, res, next) {
+    var image = "image.jpg"
+    var image_full = __dirname + "/public/" + image;
+    image_model.findOne({}, function (err, record) {
+        if(err) return console.error(err);
+        // console.log(record);
+        if(record){
+            // See https://nodejs.org/api/fs.html#fs_fs_writefile_file_data_options_callback
+            fs.writeFile(image_full, record.image, function () {
+                // Create an img tag
+                res.send('<img src="' + image + '"></img>');
+                // delete image record
+                image_model.remove({_id:record._id},function(){
+                    console.log("Popped off image and deleted image record");
+                });
+            });
+        }
+        else {
+            res.send("No more image records to retrieve");
+        }
+    }); // End temp_model callback
+
+});
+
+
 
 
 

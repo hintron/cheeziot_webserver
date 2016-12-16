@@ -8,18 +8,17 @@ var temperature_schema = mongoose.Schema({
     event: {
         temperature: {
             type: Number,
-            default: 1,
             required: true,
         },
         date: {
             type: Date,
             required: true,
         },
+        image: {
+            type: Buffer,
+            required: false,
+        },
     },
-    // ip_address: {
-    //     type: String,
-    //     required: true,
-    // },
 });
 
 var TemperatureModel = mongoose.model('logs_92888412929238858988', temperature_schema);
