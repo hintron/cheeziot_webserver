@@ -63,7 +63,7 @@ app.get('/data', function (req, res, next) {
         if(temp_records.length > 0){
             // Filter out the kaa-specific data?
             var data = [];
-            for(index in temp_records){
+            for(var index in temp_records){
                 // console.log(temp_records[index]);
                 // console.log(temp_records[index]["event"]);
                 data.push(temp_records[index]["event"]);
@@ -93,62 +93,104 @@ app.get('/data', function (req, res, next) {
 // Will we gain from Kaa's redundancy protections here?
 // Or would it be simpler to merely store the path to an image, and store the images into folders in the file system?
 
-// stash image
-// Stores the file "public/image.jpg" in the db and deletes the left-over file
+// stash all files in the images folder
+// Stores the files in "public/images/" in the db and deletes the left-over files
 app.get('/stash', function (req, res, next) {
-    var image = "/public/image.jpg"
+    var image_folder = __dirname + "/public/images/"
 
-    fs.readFile(__dirname + image, function(err, data) {
+    // Read all files in the image folder
+    fs.readdir(image_folder, function(err, files){
         if (err){
             console.error(err);
-            res.send("Cannot stash image " + image + ". Perhaps it doesn't exist?");
+            res.send("Cannot open images folder");
             return;
         }
-        
-        // console.log(data);
-        var record = new image_model({
-            image: data, 
-        });
-        record.save(function(err, saved_record) {
-            if(err) return console.error(err);
-            
-            // Delete the image file
-            fs.unlink(__dirname + image, function(){
-                console.log("Deleted file " + image);
-            });
 
-            // console.log(saved_record);
-            res.send("image stashed and saved: " + image);
+        // See http://stackoverflow.com/questions/18983138/callback-after-all-asynchronous-foreach-callbacks-are-completed
+        var itemsProcessed = 0;
+
+        files.forEach(function(image){
+            console.log(image);
+
+            fs.readFile(image_folder + image, function(err, data) {
+                if (err){
+                    console.error(err);
+                    res.send("Cannot stash image " + image + ". Perhaps it doesn't exist?");
+                    return;
+                }
+                
+                // console.log(data);
+                var record = new image_model({
+                    image: data,
+                    name: image
+                });
+                record.save(function(err, saved_record) {
+                    if(err) return console.error(err);
+                    
+                    // Delete the image file
+                    fs.unlink(image_folder + image, function(){
+                        console.log("Deleted file " + image);
+                        
+                        itemsProcessed++;
+                        // Since this is all asynchronous and in parallel, we only want to send the http response once
+                        // So don't send it until the last one finishes up!
+                        if(itemsProcessed == files.length){
+                            console.log("All images stashed");
+                            res.send("all images stashed and saved!");
+                            // return;
+                        } else {
+                            // console.log(itemsProcessed + " < " + files.length);
+                        }
+                    });
+
+                });
+            });
         });
+
+
     });
 });
 
 
 
-// Un-stash or pop an image
-// Gets the first record in the test_images collection,
-// and extracts the image data and saves it into a file called image_out.jpg,
-// then deletes the record the image was extracted from
+// Un-stash or pop all the images in the db into the images folder
 app.get('/retrieve', function (req, res, next) {
-    var image = "image.jpg"
-    var image_full = __dirname + "/public/" + image;
-    image_model.findOne({}, function (err, record) {
+    var image_folder = "images/";
+    var image_path = __dirname + "/public/" + image_folder;
+
+    image_model.find({}, function (err, records) {
         if(err) return console.error(err);
-        // console.log(record);
-        if(record){
+        console.log(records.length);
+        if(records.length <= 0){
+            res.send("No more image records to retrieve");
+            return;
+        }
+
+        // console.log(records);
+
+        var html = "Hello!";
+        var itemsProcessed = 0;
+        records.forEach(function(record){
+
             // See https://nodejs.org/api/fs.html#fs_fs_writefile_file_data_options_callback
-            fs.writeFile(image_full, record.image, function () {
+            fs.writeFile(image_path + record.name, record.image, function () {
                 // Create an img tag
-                res.send('<img src="' + image + '"></img>');
+                html += '<img src="' + image_folder + record.name + '"></img>';
                 // delete image record
-                image_model.remove({_id:record._id},function(){
-                    console.log("Popped off image and deleted image record");
+                image_model.remove({_id:record._id}, function(){
+                    console.log("Popped off image and deleted image record " + record.name);
+
+                    itemsProcessed++;
+                    // If processing the last one, send the response
+                    if(itemsProcessed == records.length){
+                        res.send(html);
+                        // return;
+                    }
                 });
             });
-        }
-        else {
-            res.send("No more image records to retrieve");
-        }
+
+        })
+
     }); // End temp_model callback
 
 });
