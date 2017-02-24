@@ -86,6 +86,32 @@ app.get('/data', function (req, res, next) {
 
 });
 
+app.get('/image', function (req, res, next) {
+
+    var PythonShell = require('python-shell');
+
+    //python script extracts an image from the MongoDB and saves it as test_out.bmp
+    PythonShell.run('scripts/m2.py', function (err) {
+        if (err) 
+            throw err;
+        else {
+            res.sendFile('public/images/test_out.bmp', {root: __dirname},
+                function(err){
+                    if(err) {
+                        console.log("Error reading image");
+                    } else {
+                        //delete the image from the local filesystem
+                        fs.unlink("public/images/test_out.bmp", function(err){
+                                if(err)
+                                    console.log("Error: could not delete image");
+                        });
+                    }
+                }
+            );
+        }
+    });  
+});
+
 
 // Proof-of-concept - storing and retrieving an image from MongoDB!
 
@@ -222,7 +248,7 @@ app.use(function (err, req, res, next) {
 });
 
 // redirect http request to https
-http.createServer(app).listen(80);
+http.createServer(app).listen(8080);
 
 
 console.log("Nodejs server is up and running!");
