@@ -23,6 +23,8 @@ var image_model = require('./models/image.js');
 const DB = "kaa";
 
 
+
+
 // Note: if db "pizza" didn't exist, it would still connect, and just create the db when saves
 mongoose.connect('mongodb://localhost/' + DB);
 
@@ -93,24 +95,26 @@ app.get('/image', function (req, res, next) {
 
     //python script extracts an image from the MongoDB and saves it as test_out.bmp
     PythonShell.run('scripts/m2.py', function (err) {
-        if (err) 
+        if (err){
             throw err;
+        }
         else {
             res.sendFile('public/images/test_out.bmp', {root: __dirname},
                 function(err){
                     if(err) {
                         console.log("Error reading image");
-                    } else {
-                        //delete the image from the local filesystem
-                        fs.unlink("public/images/test_out.bmp", function(err){
-                                if(err)
-                                    console.log("Error: could not delete image");
-                        });
+                        return;
                     }
+                    //delete the image from the local filesystem
+                    fs.unlink("public/images/test_out.bmp", function(err){
+                        if(err){
+                            console.log("Error: could not delete image");
+                        }
+                    });
                 }
             );
         }
-    });  
+    });
 });
 
 
@@ -145,19 +149,19 @@ app.get('/stash', function (req, res, next) {
                     res.send("Cannot stash image " + image + ". Perhaps it doesn't exist?");
                     return;
                 }
-                
+
                 // console.log(data);
                 var record = new image_model({
                     image: data,
                     name: image
                 });
                 record.save(function(err, saved_record) {
-                    if(err) return console.error(err);
-                    
+                    if(err){ return console.error(err) };
+
                     // Delete the image file
                     fs.unlink(image_folder + image, function(){
                         console.log("Deleted file " + image);
-                        
+
                         itemsProcessed++;
                         // Since this is all asynchronous and in parallel, we only want to send the http response once
                         // So don't send it until the last one finishes up!
