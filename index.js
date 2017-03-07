@@ -86,6 +86,7 @@ app.get('/data', function (req, res, next) {
 
 });
 
+//Pull an image from the Mongo database and send it to the client
 app.get('/image', function (req, res, next) {
 
     var PythonShell = require('python-shell');
