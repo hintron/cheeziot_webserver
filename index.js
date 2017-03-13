@@ -239,9 +239,9 @@ app.use(express.static('public', {
 // See https://expressjs.com/en/starter/faq.html
 // static simply calls next() when it hits 404, so if nothing catches it, it is not found
 app.use(function (req, res, next) {
-    res.status(404).sendFile(__dirname + "/public/404.html");
+    // res.status(404).sendFile(__dirname + "/public/404.html");
     // Use the following error-generating code to temporarily test 500 errors
-    // res.status(404).sendFile("./public/404.htffffff");
+    res.status(404).sendFile('public/images/404.png', {root: __dirname});
 });
 
 
