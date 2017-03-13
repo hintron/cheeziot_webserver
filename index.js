@@ -253,7 +253,7 @@ app.use(function (err, req, res, next) {
 });
 
 // redirect http request to https
-http.createServer(app).listen(8080);
+http.createServer(app).listen(80);
 
 
 console.log("Nodejs server is up and running!");
