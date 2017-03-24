@@ -99,18 +99,12 @@ app.get('/image', function (req, res, next) {
             throw err;
         }
         else {
-            res.sendFile('public/images/test_out.bmp', {root: __dirname},
+            res.sendFile('public/faces.html', {root: __dirname},
                 function(err){
                     if(err) {
-                        console.log("Error reading image");
+                        console.log("Error loading faces.html");
                         return;
                     }
-                    //delete the image from the local filesystem
-                    fs.unlink("public/images/test_out.bmp", function(err){
-                        if(err){
-                            console.log("Error: could not delete image");
-                        }
-                    });
                 }
             );
         }
@@ -223,11 +217,7 @@ app.get('/retrieve', function (req, res, next) {
         })
 
     }); // End temp_model callback
-
 });
-
-
-
 
 
 // Serve public content - set it as the website root
@@ -253,7 +243,7 @@ app.use(function (err, req, res, next) {
 });
 
 // redirect http request to https
-http.createServer(app).listen(80);
+http.createServer(app).listen(8080);
 
 
 console.log("Nodejs server is up and running!");

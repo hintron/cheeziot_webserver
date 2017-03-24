@@ -1,4 +1,6 @@
 import pymongo
+import os
+import datetime
 from base64 import decodestring
 
 from bson.objectid import ObjectId
@@ -52,14 +54,37 @@ entry = client[database][collection].find().sort("header.timestamp", pymongo.DES
 print "-----------------------"
 
 print entry.get("_id")
+name = entry.get("event").get("person_name").rstrip()
 
-# for doc in cursor:
-#     print doc.get("_id")
+if os.path.isfile("public/faces.html"):
+	os.remove("public/faces.html")
+
+#construct the faces.html page to be served to a client.
+last_seen = open("public/faces.html", "w")
+last_seen.write("<!doctype html>\n")
+last_seen.write("  <head>\n")
+last_seen.write("    <title>Faces of the Clyde</title>\n")
+last_seen.write("  </head>\n")
+last_seen.write("  <body>\n")
+last_seen.write("    <img src=\"images/faces.png\">\n")
+last_seen.write("    <div>\n")
+last_seen.write("      <img src=\"images/test_out.bmp\" width=\"200\" height=\"200\">\n")
+name_string =   "      <font size = \"6\" face=\"Courier New\">" + name + "</b>\n"
+last_seen.write("    </div>\n")
+last_seen.write("    <div>\n")
+last_seen.write(name_string)
+last_seen.write("    </div>\n")
+last_seen.write("  </body>\n")
+last_seen.write("</html>\n")
+last_seen.close()
 
 
 raw_image_data = entry.get("event").get("image_data")
-# print "raw_image_data length", len(raw_image_data)
-# print type(decodestring(raw_image_data[0]))
+
+#if test_out.bmp already exists, delete it
+if os.path.isfile("public/images/test_out.bmp"):
+	os.remove("public/images/test_out.bmp")
+
 f = file("public/images/test_out.bmp", "wb")
 for i in raw_image_data:
 	f.write(decodestring(i))
