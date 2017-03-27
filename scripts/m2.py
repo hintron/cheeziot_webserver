@@ -35,6 +35,7 @@ client = MongoClient('localhost', 27017)
 # entry = client[database][collection].find_one({"_id": ObjectId("58a61687870a765994850d5a")})
 
 # Sort from newest to oldest based on the kaa timestamp, and return the newest record
+# For sorting nested fields, see http://stackoverflow.com/questions/12031507/mongodb-sorting-by-nested-object-value
 entry = client[database][collection].find().sort("header.timestamp", pymongo.DESCENDING).limit(1)[0]
 
 # Get the most recent image record according to _id
@@ -42,8 +43,8 @@ entry = client[database][collection].find().sort("header.timestamp", pymongo.DES
 # See http://stackoverflow.com/questions/4421207/mongodb-how-to-get-the-last-n-records
 # entry = client[database][collection].find().sort("_id", pymongo.DESCENDING).limit(1)[0]
 
-# TODO: How to use find_one() instead of find().limit(1)? They aren't really interchangeable
-
+# NOTE: find_one() and find().limit(1) aren't perfectly interchangeable
+# See http://dba.stackexchange.com/questions/7573/difference-between-mongodbs-find-and-findone-calls
 
 # # Other tests
 # cursor = client[database][collection].find().sort("_id", pymongo.DESCENDING)
