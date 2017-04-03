@@ -20,7 +20,7 @@ mongoose.Promise = require('bluebird');
 var temp_model = require('./models/temperature.js');
 var image_model = require('./models/image.js');
 var statistics_model = require('./models/statistics.js');
-var async = require('async');
+// var async = require('async');
 
 const DB = "kaa";
 
@@ -244,9 +244,11 @@ app.use(function (err, req, res, next) {
     res.status(500).sendFile(__dirname + "/public/500.html");
 });
 
+// Update how many times each person has been seen in the statistics model
 function process_names(person_array) {
-
-    async.eachOf(person_array, function(value, key, callback){
+    // Use foreach instead of for in or for
+    // See http://stackoverflow.com/a/14929940/1416379
+    Object.keys(person_array).forEach(function(key) {
         console.log(key);
         statistics_model.findOne({ name: key }, function(err, doc){
             if (doc){
@@ -256,7 +258,7 @@ function process_names(person_array) {
               console.log(doc);
                 var test_schema = new statistics_model({
                     name: key,
-                    recognized_count: value,
+                    recognized_count: person_array[key],
                     last_time: "today",
                     last_location: "clyde"
                 });
@@ -265,9 +267,8 @@ function process_names(person_array) {
                     if(err){ return console.error(err) };
                     console.log(key, " saved to stats db");
                 });
-            }      
+            }
         });
-        callback();
     });
 }
 
@@ -284,7 +285,6 @@ var intervalID = setInterval(function() {
         var count = 0;
 
         records.forEach(function(record){
-
             var person_name = String(record.event.person_name).trim();
 
             count++;
@@ -295,21 +295,21 @@ var intervalID = setInterval(function() {
 
             //add to array
 
+            // Count how many times the person has been seen
             if(typeof person_array[person_name] == 'undefined') {
                 person_array[person_name] = 1;
             }
             else {
                 person_array[person_name]++;
             }
-            
 
             if(count == length) {
                 process_names(person_array);
             }
-        }); 
+        });
 
         //now create and add to stats collection
-    }); 
+    });
 
 
 
