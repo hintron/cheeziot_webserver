@@ -3,17 +3,15 @@ var mongoose = require('mongoose')
 console.log("ImageModel");
 
 var image_schema = mongoose.Schema({
-    image: {
-        type: Buffer,
-        required: true,
+   event: {
+        person_name: {
+            type: String,
+            required: true,
+        },
     },
-    name : {
-        type: String,
-        required: true,
-    }
 });
 
-var ImageModel = mongoose.model('test_images', image_schema);
+var ImageModel = mongoose.model('logs_99957758195164324594', image_schema);
 
 module.exports = ImageModel;
 

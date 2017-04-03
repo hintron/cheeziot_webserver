@@ -19,6 +19,8 @@ mongoose.Promise = require('bluebird');
 // TODO: Create mongoose models
 var temp_model = require('./models/temperature.js');
 var image_model = require('./models/image.js');
+var statistics_model = require('./models/statistics.js');
+var async = require('async');
 
 const DB = "kaa";
 
@@ -241,6 +243,82 @@ app.use(function (err, req, res, next) {
     console.error(err.stack);
     res.status(500).sendFile(__dirname + "/public/500.html");
 });
+
+function process_names(person_array) {
+
+    async.eachOf(person_array, function(value, key, callback){
+        console.log(key);
+        statistics_model.findOne({ name: key }, function(err, doc){
+            if (doc){
+                console.log("Name already exists ");
+                //Update the count
+            }else{
+              console.log(doc);
+                var test_schema = new statistics_model({
+                    name: key,
+                    recognized_count: value,
+                    last_time: "today",
+                    last_location: "clyde"
+                });
+
+                test_schema.save(function(err, saved_record) {
+                    if(err){ return console.error(err) };
+                    console.log(key, " saved to stats db");
+                });
+            }      
+        });
+        callback();
+    });
+}
+
+var cnt = 0;
+var intervalID = setInterval(function() {
+    cnt = cnt + 1;
+
+    var person_array = {};
+
+    //Iterate through all records in the image collection
+    image_model.find({}, function (err, records) {
+        if(err) return console.error(err);
+        var length = records.length;
+        var count = 0;
+
+        records.forEach(function(record){
+
+            var person_name = String(record.event.person_name).trim();
+
+            count++;
+
+            if(typeof person_name == 'undefined') return
+
+            console.log("name: " + person_name);
+
+            //add to array
+
+            if(typeof person_array[person_name] == 'undefined') {
+                person_array[person_name] = 1;
+            }
+            else {
+                person_array[person_name]++;
+            }
+            
+
+            if(count == length) {
+                process_names(person_array);
+            }
+        }); 
+
+        //now create and add to stats collection
+    }); 
+
+
+
+
+
+
+    console.log("interval:", cnt);
+
+}, 2000);
 
 // redirect http request to https
 http.createServer(app).listen(80);
