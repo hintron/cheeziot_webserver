@@ -1,0 +1,12 @@
+input, p, h1, div {
+    font-family: 'Schoolbell', cursive;
+}
+
+.stat-record {
+    border-top: 3px solid #00ccff;
+}
+
+.column-zero {
+    border-right: 2px solid #ff3399;
+
+}

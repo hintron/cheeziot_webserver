@@ -5,31 +5,25 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>Statistics</title>
 
+    <!-- Make the chrome menu bar to look black? -->
+    <!-- <meta name="theme-color" content="#000000"> -->
 
-
-    <!-- Make the chrome menu bar to look black -->
-    <meta name="theme-color" content="#000000">
     <!-- Don't let the user zoom in mobile -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <link rel="icon" href="/content/favicon.ico">
 
+    <!-- TODO: Create a favicon -->
+    <!-- <link rel="icon" href="/content/favicon.ico"> -->
 
     <!-- LIBRARIES -->
-    <!-- Install the angular file like so (cd to cheeziot_webserver/):  -->
-    <!-- npm install; mkdir public/lib/js/; cp node_modules/angular/angular.min.js public/lib/js/ -->
-    <script src="/lib/js/angular.min.js"></script>
-    <!-- Install the normalize.css file like so (cd to cheeziot_webserver/):  -->
-    <!-- npm install; mkdir public/lib/css/; cp node_modules/normalize.css/normalize.css public/lib/css/ -->
-    <link rel="stylesheet" href="/lib/css/normalize.css">
-    <!-- For development only -->
-    <!-- <script src="/lib/js/angular.js"></script> -->
-    <!-- Use jQuery for now, and move to Angular later? -->
-    <script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
+    <!-- Note: Use CDNs where possible, to reduce the load on the server -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.4/angular.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.6/css/bootstrap.min.css">
     <!-- Check out Angular 1 docs here: https://code.angularjs.org/1.6.4/docs/api -->
+    <!-- Bootstrap already uses Normalize.css -->
 
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
-
+    <!-- Google fonts! -->
+    <!-- https://fonts.google.com/ -->
+    <link href="https://fonts.googleapis.com/css?family=Schoolbell" rel="stylesheet">
 
     <!-- CUSTOM CODE -->
     <link rel="stylesheet" href="css/stats.css">
@@ -46,20 +40,21 @@
     </div>
     <div class="alert alert-danger" ng-hide="polling_active">
         Lost connection with the server! Try refreshing page
-        <!-- TODO: Create a retry button -->
+        <!-- TODO: Create a retry button? -->
     </div>
 
     <div class="row">
-        <!-- <div class="col-xs-1 col-sm-offset-1 col-sm-1">#</div> -->
-        <div class="col-xs-1 col-sm-1">#</div>
+        <div class="column-zero col-xs-1 col-sm-1">#</div>
         <div class="col-xs-2 col-sm-2">Name</div>
         <div class="col-xs-3 col-sm-3">Recognized Count</div>
         <div class="col-xs-3 col-sm-3">Last Location</div>
         <div class="col-xs-3 col-sm-3">Last Time</div>
     </div>
-    <!-- TODO: For each person of interest, show their stats -->
-    <div class="row" ng-repeat="record in records">
-        <div class="col-sm-1 col-xs-12">
+
+
+    <!-- For each person of interest, show their stats -->
+    <div class="row stat-record" ng-repeat="record in records">
+        <div class="column-zero col-sm-1 col-xs-12">
             {{$index}}
         </div>
         <p class="col-sm-3 col-xs-12" ng-model="record.image">
@@ -74,8 +69,6 @@
         <p class="col-sm-3 col-xs-12" ng-model="record.image">
             {{record.last_time}}
         </p>
-        <!-- TODO: Image data needs to be converted to base64, and then it can be populated into an image file -->
-        <!-- <textarea class="col-sm-6 col-xs-12" ng-model="record.date" ng-model-options="{ debounce: 500 }" ng-change="update_passcode($index, 'notes')"></textarea> -->
     </div>
 
 </body>
