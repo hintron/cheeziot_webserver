@@ -257,7 +257,7 @@ function clear_database() {
         console.log("Most recent name: " + global.most_recent_name);
 
         //Delete all of the documents in the database except the most
-        //recently seen person. 
+        //recently seen person.
         image_model.remove({'_id':{ "$ne": most_recent_id }} , function(err){
         });
     });
@@ -266,7 +266,7 @@ function clear_database() {
 // Update how many times each person has been seen in the statistics model
 function process_names(person_array) {
     // var person_array_len = Object.keys(person_array).length);
-    
+
     // Use foreach instead of for in or for
     // See http://stackoverflow.com/a/14929940/1416379
     Object.keys(person_array).forEach(function(key) {
@@ -340,7 +340,7 @@ var intervalID = setInterval(function() {
         });
     });
 
-}, 2000);
+}, 10000);
 
 // redirect http request to https
 http.createServer(app).listen(80);
