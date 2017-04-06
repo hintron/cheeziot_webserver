@@ -1,24 +1,62 @@
 <!DOCTYPE html>
-<html>
+<html ng-app="stats">
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>Statistics</title>
-    <link rel="stylesheet" href="css/stats.css">
+
+
+
+    <!-- Make the chrome menu bar to look black -->
+    <meta name="theme-color" content="#000000">
+    <!-- Don't let the user zoom in mobile -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <link rel="icon" href="/content/favicon.ico">
+
+
     <!-- LIBRARIES -->
+    <!-- Install the angular file like so (cd to cheeziot_webserver/):  -->
+    <!-- npm install; mkdir public/lib/js/; cp node_modules/angular/angular.min.js public/lib/js/ -->
+    <script src="/lib/js/angular.min.js"></script>
+    <!-- Install the normalize.css file like so (cd to cheeziot_webserver/):  -->
+    <!-- npm install; mkdir public/lib/css/; cp node_modules/normalize.css/normalize.css public/lib/css/ -->
+    <link rel="stylesheet" href="/lib/css/normalize.css">
+    <!-- For development only -->
+    <!-- <script src="/lib/js/angular.js"></script> -->
     <!-- Use jQuery for now, and move to Angular later? -->
     <script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
+    <!-- Check out Angular 1 docs here: https://code.angularjs.org/1.6.4/docs/api -->
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+
+
     <!-- CUSTOM CODE -->
+    <link rel="stylesheet" href="css/stats.css">
     <script src="js/stats.js"></script>
 </head>
-<body>
+<body ng-controller="Main as ctrl">
     Statistics page!
 
+
     <!-- TODO: For each person of interest, show their stats -->
-
-    <!-- TODO: Use angular, since it has straightforward binding -->
-
-
+    <div class="row" ng-repeat="record in records">
+        <div class="col-sm-1 col-xs-12">
+            {{$index}}
+        </div>
+        <p class="col-sm-6 col-xs-12" ng-model="record.date">
+            {{record.date}}
+        </p>
+        <p class="col-sm-4 col-xs-12" type="text" ng-model="record.image">
+            <!-- TODO: Image data needs to be converted to base64, and then it can be populated into an image file -->
+            {{record.image.type}}
+        </p>
+        <!-- <textarea class="col-sm-6 col-xs-12" ng-model="record.date" ng-model-options="{ debounce: 500 }" ng-change="update_passcode($index, 'notes')"></textarea> -->
+    </div>
 
 </body>
 </html>
+
+
+
+

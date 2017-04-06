@@ -8,6 +8,9 @@
 # Node
 node_modules
 
+# 3rd-party library files
+public/lib
+
 ## C++ stuff
 # Compiled Object files
 *.slo
