@@ -36,21 +36,45 @@
     <script src="js/stats.js"></script>
 </head>
 <body ng-controller="Main as ctrl">
-    Statistics page!
+    <h1>Statistics page!</h1>
 
+    <div class="row">
+        <div class="boss_button col-sm-4 col-xs-12" ng-click="create_passcode()">
+            Write a message to the server
+        </div>
+        <input class="col-sm-8 col-xs-12" type="text" ng-model="message">
+    </div>
+    <div class="alert alert-danger" ng-hide="polling_active">
+        Lost connection with the server! Try refreshing page
+        <!-- TODO: Create a retry button -->
+    </div>
 
+    <div class="row">
+        <!-- <div class="col-xs-1 col-sm-offset-1 col-sm-1">#</div> -->
+        <div class="col-xs-1 col-sm-1">#</div>
+        <div class="col-xs-2 col-sm-2">Name</div>
+        <div class="col-xs-3 col-sm-3">Recognized Count</div>
+        <div class="col-xs-3 col-sm-3">Last Location</div>
+        <div class="col-xs-3 col-sm-3">Last Time</div>
+    </div>
     <!-- TODO: For each person of interest, show their stats -->
     <div class="row" ng-repeat="record in records">
         <div class="col-sm-1 col-xs-12">
             {{$index}}
         </div>
-        <p class="col-sm-6 col-xs-12" ng-model="record.date">
-            {{record.date}}
+        <p class="col-sm-3 col-xs-12" ng-model="record.image">
+            {{record.name}}
         </p>
-        <p class="col-sm-4 col-xs-12" type="text" ng-model="record.image">
-            <!-- TODO: Image data needs to be converted to base64, and then it can be populated into an image file -->
-            {{record.image.type}}
+        <p class="col-sm-2 col-xs-12" ng-model="record.image">
+            {{record.recognized_count}}
         </p>
+        <p class="col-sm-3 col-xs-12" ng-model="record.date">
+            {{record.last_location}}
+        </p>
+        <p class="col-sm-3 col-xs-12" ng-model="record.image">
+            {{record.last_time}}
+        </p>
+        <!-- TODO: Image data needs to be converted to base64, and then it can be populated into an image file -->
         <!-- <textarea class="col-sm-6 col-xs-12" ng-model="record.date" ng-model-options="{ debounce: 500 }" ng-change="update_passcode($index, 'notes')"></textarea> -->
     </div>
 

@@ -48,10 +48,48 @@ app.use(bodyparser.json());
 // Use the bodyparser middleware to get the json data
 
 
-// TODO: Create CRUD endpoints
+app.post('/get-stats', function (req, res, next) {
+
+    // See passed in values
+    // Note: it is already JSON decoded because of bodyparser.json
+    // console.log(req.body);
+    // console.log("Client message: " + req.body.client_message);
 
 
-// app.post('/data', function (req, res, next) {
+    // Get all the statistics
+    statistics_model.find({}, function(err, stat_records) {
+        if(err){ return console.error(err) };
+        if(stat_records.length > 0){
+            // var data = [];
+            // for(var index in stat_records){
+            //     // console.log(stat_records[index]);
+            //     // console.log(stat_records[index]["event"]);
+            //     data.push(stat_records[index]["event"]);
+            // }
+            res.send(JSON.stringify({
+                success: true,
+                msg:'Here is all the statistics data:',
+                count: stat_records.length,
+                data: stat_records,
+                // Spit back the client message to prove that it works
+                client_message: req.body.client_message,
+            }));
+        }
+        else {
+            res.send(JSON.stringify({
+                success: false,
+                msg:'Could not get the data...',
+            }));
+        }
+    }); // End statistics_model callback
+
+
+
+
+});
+
+
+
 // Use get instead of post for now, so I can test in browser window
 app.get('/data', function (req, res, next) {
     // console.log("Test CRUD endpoint!");
@@ -63,7 +101,7 @@ app.get('/data', function (req, res, next) {
     // http://stackoverflow.com/questions/13436467/javascript-nosql-injection-prevention-in-mongodb
 
     temp_model.find({}, function(err, temp_records) {
-        if(err) return console.error(err);
+        if(err){ return console.error(err) };
         if(temp_records.length > 0){
             // Filter out the kaa-specific data?
             var data = [];
