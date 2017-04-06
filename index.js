@@ -244,18 +244,52 @@ app.use(function (err, req, res, next) {
     res.status(500).sendFile(__dirname + "/public/500.html");
 });
 
+var most_recent_id;
+global.most_recent_name;
+
+// Deletes all but the latest entry in the image database
+function clear_database() {
+    // Find the object id of the most recently seen user.
+    image_model.findOne({}, {}, { sort: { 'header.timestamp' : -1 } }, function(err, latest) {
+        most_recent_id = latest._id;
+        global.most_recent_name = latest.event.person_name;
+
+        console.log("Most recent name: " + global.most_recent_name);
+
+        //Delete all of the documents in the database except the most
+        //recently seen person. 
+        image_model.remove({'_id':{ "$ne": most_recent_id }} , function(err){
+        });
+    });
+}
+
 // Update how many times each person has been seen in the statistics model
 function process_names(person_array) {
+    // var person_array_len = Object.keys(person_array).length);
+    
     // Use foreach instead of for in or for
     // See http://stackoverflow.com/a/14929940/1416379
     Object.keys(person_array).forEach(function(key) {
-        console.log(key);
+        // console.log(key);
         statistics_model.findOne({ name: key }, function(err, doc){
             if (doc){
-                console.log("Name already exists ");
-                //Update the count
+                console.log(key + " already exists ");
+                // Update the count
+
+                //If the user to be updated in the statistics collection is the most recent
+                //don't update so as to prevent a double count.
+                if(global.most_recent_name != key) {
+                    var conditions = { name: key }
+                        , update = { $inc: { recognized_count : person_array[key] }};
+
+                    statistics_model.update(conditions, update, callback);
+                }
+
+                function callback (err, numAffected) {
+                // numAffected is the number of updated documents
+                    console.log("incrementing: " + person_array[key]);
+                };
             }else{
-              console.log(doc);
                 var test_schema = new statistics_model({
                     name: key,
                     recognized_count: person_array[key],
@@ -270,11 +304,11 @@ function process_names(person_array) {
             }
         });
     });
+
+    clear_database();
 }
 
-var cnt = 0;
 var intervalID = setInterval(function() {
-    cnt = cnt + 1;
 
     var person_array = {};
 
@@ -285,15 +319,10 @@ var intervalID = setInterval(function() {
         var count = 0;
 
         records.forEach(function(record){
-            var person_name = String(record.event.person_name).trim();
 
             count++;
-
-            if(typeof person_name == 'undefined') return
-
-            console.log("name: " + person_name);
-
-            //add to array
+            if(typeof record.event.person_name == 'undefined') return
+            var person_name = String(record.event.person_name).trim();
 
             // Count how many times the person has been seen
             if(typeof person_array[person_name] == 'undefined') {
@@ -303,20 +332,13 @@ var intervalID = setInterval(function() {
                 person_array[person_name]++;
             }
 
+            //Process names in person_array once we have iterated over all
+            //entries in the image database.
             if(count == length) {
                 process_names(person_array);
             }
         });
-
-        //now create and add to stats collection
     });
-
-
-
-
-
-
-    console.log("interval:", cnt);
 
 }, 2000);
 
