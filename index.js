@@ -154,15 +154,8 @@ app.get('/image', function (req, res, next) {
 
 
 // Proof-of-concept - storing and retrieving an image from MongoDB!
-
-// TODO: Is it worth it to save images in MongoDB with Kaa?
-// Will we gain from Kaa's redundancy protections here?
-// Or would it be simpler to merely store the path to an image, and store the images into folders in the file system?
-
-// stash all files in the images folder
-// Stores the files in "public/images/" in the db and deletes the left-over files
 app.get('/stash', function (req, res, next) {
-    var image_folder = __dirname + "/public/images/"
+    var image_folder = __dirname + "/public/stashed-images/";
 
     // Read all files in the image folder
     fs.readdir(image_folder, function(err, files){
@@ -180,10 +173,10 @@ app.get('/stash', function (req, res, next) {
 
         // See http://stackoverflow.com/questions/18983138/callback-after-all-asynchronous-foreach-callbacks-are-completed
         var itemsProcessed = 0;
+        // Build the html to return
+        var html = "";
 
         files.forEach(function(image){
-            console.log(image);
-
             fs.readFile(image_folder + image, function(err, data) {
                 if (err){
                     console.error(err);
@@ -191,28 +184,24 @@ app.get('/stash', function (req, res, next) {
                     return;
                 }
 
-                // console.log(data);
                 var record = new stash_model({
                     image: data,
                     name: image
                 });
+
                 record.save(function(err, saved_record) {
                     if(err){ return console.error(err) };
 
                     // Delete the image file
                     fs.unlink(image_folder + image, function(){
-                        console.log("Deleted file " + image);
+                        html += "Stashed image " + image + "<br>";
 
                         itemsProcessed++;
                         // Since this is all asynchronous and in parallel, we only want to send the http response once
                         // So don't send it until the last one finishes up!
                         if(itemsProcessed == files.length){
-                            console.log("All images stashed");
-                            res.send("all images stashed and saved!");
-                            return;
-                        }
-                        else {
-                            // console.log(itemsProcessed + " < " + files.length);
+                            html += "All images stashed and saved!";
+                            res.send(html);
                         }
                     });
 
@@ -227,22 +216,17 @@ app.get('/stash', function (req, res, next) {
     });
 });
 
-
-
-// Un-stash or pop all the images in the db into the images folder
+// Un-stash or pop all the stashed images in the db into a folder
 app.get('/retrieve', function (req, res, next) {
-    var image_folder = "images/";
+    var image_folder = "stashed-images/";
     var image_path = __dirname + "/public/" + image_folder;
 
     stash_model.find({}, function (err, records) {
         if(err) return console.error(err);
-        console.log(records.length);
         if(records.length <= 0){
             res.send("No more image records to retrieve");
             return;
         }
-
-        // console.log(records);
 
         var html = "<h1>Showing all images retrieved:</h1>";
         var itemsProcessed = 0;
@@ -254,13 +238,11 @@ app.get('/retrieve', function (req, res, next) {
                 html += '<img src="' + image_folder + record.name + '"></img>';
                 // delete image record
                 stash_model.remove({_id:record._id}, function(){
-                    console.log("Popped off image and deleted image record " + record.name);
-
+                    // console.log("Popped off image and deleted image record " + record.name);
                     itemsProcessed++;
                     // If processing the last one, send the response
                     if(itemsProcessed == records.length){
                         res.send(html);
-                        // return;
                     }
                 });
             });
