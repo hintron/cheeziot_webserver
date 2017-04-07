@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html ng-app="realtime">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Realtime Camera View</title>
+
+    <!-- Make the chrome menu bar to look black? -->
+    <!-- <meta name="theme-color" content="#000000"> -->
+
+    <!-- Don't let the user zoom in mobile -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+    <!-- TODO: Create a favicon -->
+    <!-- <link rel="icon" href="/content/favicon.ico"> -->
+
+    <!-- LIBRARIES -->
+    <!-- Note: Use CDNs where possible, to reduce the load on the server -->
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.4/angular.min.js"></script> -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.4/angular.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.6/css/bootstrap.min.css">
+
+    <!-- Google fonts! -->
+    <link href="https://fonts.googleapis.com/css?family=Schoolbell" rel="stylesheet">
+
+    <!-- CUSTOM CODE -->
+    <link rel="stylesheet" href="/css/realtime.css">
+    <script src="/js/realtime.js"></script>
+</head>
+<body ng-controller="Main as ctrl">
+    <h1>Realtime picture page!</h1>
+
+    <img id="face" src="" alt="The face that the Raspberry PI currently sees">
+
+
+</body>
+</html>
+
+
+
+
