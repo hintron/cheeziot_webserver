@@ -11,6 +11,9 @@ node_modules
 # 3rd-party library files
 public/lib
 
+# Ignore stashed images folder
+stashed-images/
+
 ## C++ stuff
 # Compiled Object files
 *.slo

@@ -30,8 +30,22 @@
 <body ng-controller="Main as ctrl">
     <h1>Realtime picture page!</h1>
 
-    <img id="face" src="" alt="The face that the Raspberry PI currently sees">
+    <div class="container">
+        <!--
+        <div class="row">
+            <img src="/images/faces.png" alt="">
+        </div>
+        -->
 
+        <div class="row">
+            <img id="face" src="" width="200" height="200" alt="The face that the Raspberry PI currently sees">
+        </div>
+<!--
+        <div class="row">
+            <h2>{{name}}</h2>
+        </div>
+ -->
+    </div>
 
 </body>
 </html>

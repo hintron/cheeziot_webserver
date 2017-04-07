@@ -373,6 +373,27 @@ var intervalID = setInterval(function() {
 
 }, 10000);
 
+
+
+// Do the same thing that /image does, but automatically every 3 seconds
+var intervalID = setInterval(function() {
+
+    var PythonShell = require('python-shell');
+
+    //python script extracts an image from the MongoDB and saves it as test_out.bmp
+    PythonShell.run('scripts/m2.py', function (err) {
+        if (err){
+            throw err;
+        }
+        else {
+            // console.log("Reloaded the most recent face!");
+        }
+    });
+}, 3000);
+
+
+
+
 // redirect http request to https
 http.createServer(app).listen(80);
 

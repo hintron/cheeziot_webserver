@@ -53,9 +53,13 @@ entry = client[database][collection].find().sort("header.timestamp", pymongo.DES
 
 
 print "-----------------------"
-
 print entry.get("_id")
-name = entry.get("event").get("person_name").rstrip()
+
+person_name = entry.get("event").get("person_name")
+if person_name:
+    name = person_name.rstrip()
+else:
+    name = "?"
 
 if os.path.isfile("public/faces.html"):
 	os.remove("public/faces.html")

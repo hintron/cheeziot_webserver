@@ -1,3 +1,13 @@
 input, p, h1, div {
     font-family: 'Schoolbell', cursive;
 }
+
+h1 {
+    text-align: center;
+}
+
+#face {
+    /* Center the image */
+    margin-right: auto;
+    margin-left: auto;
+}
