@@ -32,43 +32,50 @@
 <body ng-controller="Main as ctrl">
     <h1>Statistics page!</h1>
 
-    <div class="row">
-        <div class="boss_button col-sm-4 col-xs-12" ng-click="create_passcode()">
-            Write a message to the server
-        </div>
-        <input class="col-sm-8 col-xs-12" type="text" ng-model="message">
-    </div>
     <div class="alert alert-danger" ng-hide="polling_active">
         Lost connection with the server! Try refreshing page
         <!-- TODO: Create a retry button? -->
     </div>
 
-    <div class="row">
-        <div class="column-zero col-xs-1 col-sm-1">#</div>
-        <div class="col-xs-2 col-sm-2">Name</div>
-        <div class="col-xs-3 col-sm-3">Recognized Count</div>
-        <div class="col-xs-3 col-sm-3">Last Location</div>
-        <div class="col-xs-3 col-sm-3">Last Time</div>
+    <div class="container message-container">
+        <div class="row">
+            <div class="boss_button col-sm-4 col-xs-12" ng-click="create_passcode()">
+                Write a message to the server
+            </div>
+            <input class="col-sm-8 col-xs-12" type="text" ng-model="message">
+        </div>
     </div>
 
+    <div class="container paper-container">
 
-    <!-- For each person of interest, show their stats -->
-    <div class="row stat-record" ng-repeat="record in records">
-        <div class="column-zero col-sm-1 col-xs-12">
-            {{$index}}
+        <div class="row">
+            <div class="column-zero col-xs-1 col-sm-1">#</div>
+            <div class="col-xs-2 col-sm-2">Name</div>
+            <div class="col-xs-3 col-sm-3">Recognized Count</div>
+            <div class="col-xs-3 col-sm-3">Last Location</div>
+            <div class="col-xs-3 col-sm-3">Last Time</div>
         </div>
-        <p class="col-sm-3 col-xs-12" ng-model="record.image">
-            {{record.name}}
-        </p>
-        <p class="col-sm-2 col-xs-12" ng-model="record.image">
-            {{record.recognized_count}}
-        </p>
-        <p class="col-sm-3 col-xs-12" ng-model="record.date">
-            {{record.last_location}}
-        </p>
-        <p class="col-sm-3 col-xs-12" ng-model="record.image">
-            {{record.last_time}}
-        </p>
+
+
+        <!-- For each person of interest, show their stats -->
+        <div class="row stat-record" ng-repeat="record in records">
+            <div class="column-zero col-sm-1 col-xs-12">
+                {{$index}}
+            </div>
+            <p class="col-sm-3 col-xs-12" ng-model="record.image">
+                {{record.name}}
+            </p>
+            <p class="col-sm-2 col-xs-12" ng-model="record.image">
+                {{record.recognized_count}}
+            </p>
+            <p class="col-sm-3 col-xs-12" ng-model="record.date">
+                {{record.last_location}}
+            </p>
+            <p class="col-sm-3 col-xs-12" ng-model="record.image">
+                {{record.last_time}}
+            </p>
+        </div>
+
     </div>
 
 </body>

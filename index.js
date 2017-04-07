@@ -20,6 +20,7 @@ mongoose.Promise = require('bluebird');
 var temp_model = require('./models/temperature.js');
 var image_model = require('./models/image.js');
 var statistics_model = require('./models/statistics.js');
+var stash_model = require('./models/stash.js');
 // var async = require('async');
 
 const DB = "kaa";
@@ -171,6 +172,12 @@ app.get('/stash', function (req, res, next) {
             return;
         }
 
+        if(files.length == 0){
+            res.send("No images in public/images to stash.");
+            return;
+        }
+
+
         // See http://stackoverflow.com/questions/18983138/callback-after-all-asynchronous-foreach-callbacks-are-completed
         var itemsProcessed = 0;
 
@@ -185,7 +192,7 @@ app.get('/stash', function (req, res, next) {
                 }
 
                 // console.log(data);
-                var record = new image_model({
+                var record = new stash_model({
                     image: data,
                     name: image
                 });
@@ -202,8 +209,9 @@ app.get('/stash', function (req, res, next) {
                         if(itemsProcessed == files.length){
                             console.log("All images stashed");
                             res.send("all images stashed and saved!");
-                            // return;
-                        } else {
+                            return;
+                        }
+                        else {
                             // console.log(itemsProcessed + " < " + files.length);
                         }
                     });
@@ -211,6 +219,9 @@ app.get('/stash', function (req, res, next) {
                 });
             });
         });
+
+
+
 
 
     });
@@ -223,7 +234,7 @@ app.get('/retrieve', function (req, res, next) {
     var image_folder = "images/";
     var image_path = __dirname + "/public/" + image_folder;
 
-    image_model.find({}, function (err, records) {
+    stash_model.find({}, function (err, records) {
         if(err) return console.error(err);
         console.log(records.length);
         if(records.length <= 0){
@@ -233,7 +244,7 @@ app.get('/retrieve', function (req, res, next) {
 
         // console.log(records);
 
-        var html = "Hello!";
+        var html = "<h1>Showing all images retrieved:</h1>";
         var itemsProcessed = 0;
         records.forEach(function(record){
 
@@ -242,7 +253,7 @@ app.get('/retrieve', function (req, res, next) {
                 // Create an img tag
                 html += '<img src="' + image_folder + record.name + '"></img>';
                 // delete image record
-                image_model.remove({_id:record._id}, function(){
+                stash_model.remove({_id:record._id}, function(){
                     console.log("Popped off image and deleted image record " + record.name);
 
                     itemsProcessed++;

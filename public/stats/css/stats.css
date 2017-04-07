@@ -8,5 +8,18 @@ input, p, h1, div {
 
 .column-zero {
     border-right: 2px solid #ff3399;
+}
 
+
+.message-container {
+    margin-bottom: 10px;
+}
+
+.paper-container {
+    border: 1px solid;
+    box-shadow: 5px 5px 15px #888888;
+}
+
+h1 {
+    text-align: center;
 }
